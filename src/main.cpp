@@ -1,21 +1,30 @@
 #include <iostream>
+#include "../include/Grafo.h"
+#include "../include/Aresta.h"
+
+using namespace std;
+
+// Declaração da função de teste (definida em Testes.cpp)
+void testarGrafo();
 
 int main(int argc, char* argv[]) {
-    std::cout << "==================================" << std::endl;
-    std::cout << "  DC-MST - Trabalho de Grafos    " << std::endl;
-    std::cout << "==================================" << std::endl;
+    cout << "========================================" << endl;
+    cout << "   DC-MST - Trabalho de Grafos          " << endl;
+    cout << "========================================" << endl;
     
     if (argc < 2) {
-        std::cout << "\nUso: " << argv[0] << " <algoritmo> <parametros>" << std::endl;
-        std::cout << "\nAlgoritmos disponíveis:" << std::endl;
-        std::cout << "  guloso <instancia>" << std::endl;
-        std::cout << "  grasp <instancia> <alfa> <iteracoes>" << std::endl;
-        std::cout << "  reativo <instancia> <iteracoes> <tamanho_bloco>" << std::endl;
-        return 1;
+        cout << "\n[INFO] Nenhum algoritmo especificado." << endl;
+        cout << "[INFO] Executando testes básicos...\n" << endl;
+        
+        testarGrafo();
+        
+        cout << "\nUso: " << argv[0] << " <algoritmo> <parametros>\n" << endl;
+        cout << "Algoritmos disponíveis:" << endl;
+        cout << "  guloso <instancia> <d>" << endl;
+        cout << "  grasp <instancia> <d> <alfa> <iteracoes>" << endl;
+        cout << "  reativo <instancia> <d> <iteracoes> <tamanho_bloco>\n" << endl;
+        return 0;
     }
-    
-    std::cout << "\n Compilação bem-sucedida!" << std::endl;
-    std::cout << " Estrutura básica funcionando." << std::endl;
-    
+        
     return 0;
 }
