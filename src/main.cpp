@@ -6,6 +6,8 @@ using namespace std;
 
 // Declaração da função de teste (definida em Testes.cpp)
 void testarGrafo();
+void testarUnionFind();
+void testarUnionFindComGrafo();
 
 int main(int argc, char* argv[]) {
     cout << "========================================" << endl;
@@ -17,6 +19,8 @@ int main(int argc, char* argv[]) {
         cout << "[INFO] Executando testes básicos...\n" << endl;
         
         testarGrafo();
+        testarUnionFind();
+        testarUnionFindComGrafo();
         
         cout << "\nUso: " << argv[0] << " <algoritmo> <parametros>\n" << endl;
         cout << "Algoritmos disponíveis:" << endl;
