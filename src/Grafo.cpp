@@ -1,6 +1,7 @@
 #include "../include/Grafo.h"
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 
 // Construtor
 Grafo::Grafo(int n) : numVertices(n) {
@@ -61,7 +62,7 @@ std::vector<Aresta> Grafo::getTodasArestas() const {
     // Percorrer todos os vértices
     for (int u = 0; u < numVertices; u++) {
         // Para cada vizinho de u
-        for (auto& par : adj[u]) {  // ✅ CORRIGIDO
+        for (auto& par : adj[u]) {  
             int v = par.first;
             double peso = par.second;
             
@@ -118,5 +119,51 @@ void Grafo::imprimirGrafo() const {
         }
         std::cout << std::endl;
     }
+}
     
+
+// Imprime em formato Graph Editor
+void Grafo::imprimirFormatoGraphEditor() const {
+    std::vector<Aresta> arestas = getTodasArestas();
+    
+    std::cout << "\n========================================" << std::endl;
+    std::cout << "  FORMATO GRAPH EDITOR (CS ACADEMY)" << std::endl;
+    std::cout << "========================================" << std::endl;
+    std::cout << "Copie e cole em: http://csacademy.com/app/grapheditor/\n" << std::endl;
+    
+    // Linha 1: n m
+    std::cout << numVertices << " " << arestas.size() << std::endl;
+    
+    // Linhas seguintes: u v peso
+    for (const auto& a : arestas) {
+        std::cout << a.getU() << " " << a.getV() << " " 
+                  << static_cast<int>(a.getPeso()) << std::endl;
+    }
+    
+    std::cout << "\n========================================\n" << std::endl;
+}
+
+// Salva em arquivo
+void Grafo::salvarFormatoGraphEditor(const std::string& arquivo) const {
+    std::ofstream out(arquivo);
+    
+    if (!out.is_open()) {
+        std::cerr << "[ERRO] Não foi possível criar arquivo: " << arquivo << std::endl;
+        return;
+    }
+    
+    std::vector<Aresta> arestas = getTodasArestas();
+    
+    // Linha 1: n m
+    out << numVertices << " " << arestas.size() << std::endl;
+    
+    // Linhas seguintes: u v peso
+    for (const auto& a : arestas) {
+        out << a.getU() << " " << a.getV() << " " 
+            << static_cast<int>(a.getPeso()) << std::endl;
+    }
+    
+    out.close();
+    
+    std::cout << "[OK] Grafo salvo em: " << arquivo << std::endl;
 }

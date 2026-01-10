@@ -4,6 +4,7 @@
 #include "Aresta.h"
 #include <vector>
 #include <utility> 
+#include <string>
 
 class Grafo {
 private:
@@ -24,6 +25,10 @@ public:
     
     // Retorna peso da aresta entre u e v (retorna -1 se não existe)
     double getPeso(int u, int v) const;
+
+    void imprimirFormatoGraphEditor() const;
+
+    void salvarFormatoGraphEditor(const std::string& arquivo) const;
     
     // Retorna todas as arestas do grafo (sem duplicação)
     std::vector<Aresta> getTodasArestas() const;
