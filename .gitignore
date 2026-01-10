@@ -1,0 +1,16 @@
+# Arquivos compilados
+*.o
+*.exe
+programa
+build/
+
+# Temporários
+*.tmp
+*.log
+.vscode/
+.idea/
+
+# Sistema
+.DS_Store
+Thumbs.db
+EOF
