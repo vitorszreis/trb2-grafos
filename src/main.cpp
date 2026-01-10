@@ -25,8 +25,6 @@ int main(int argc, char* argv[]) {
         cout << "  reativo <instancia> <d> <iteracoes> <tamanho_bloco>\n" << endl;
         return 0;
     }
-    
-    cout << "\n[INFO] Programa funcionando!" << endl;
-    
+        
     return 0;
 }
