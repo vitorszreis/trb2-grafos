@@ -1,6 +1,8 @@
 #include <iostream>
 #include "../include/Grafo.h"
 #include "../include/Aresta.h"
+#include "../include/UnionFind.h"
+#include "../include/LeitorInstancia.h"
 
 using namespace std;
 
@@ -8,6 +10,8 @@ using namespace std;
 void testarGrafo();
 void testarUnionFind();
 void testarUnionFindComGrafo();
+void testarLeituraInstancia();  
+void testarFormatoGraphEditor();
 
 int main(int argc, char* argv[]) {
     cout << "========================================" << endl;
@@ -21,6 +25,8 @@ int main(int argc, char* argv[]) {
         testarGrafo();
         testarUnionFind();
         testarUnionFindComGrafo();
+        testarLeituraInstancia();
+        testarFormatoGraphEditor();
         
         cout << "\nUso: " << argv[0] << " <algoritmo> <parametros>\n" << endl;
         cout << "Algoritmos disponíveis:" << endl;

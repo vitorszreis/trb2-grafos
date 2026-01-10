@@ -4,6 +4,7 @@
 #include "../include/Grafo.h"
 #include "../include/Aresta.h"
 #include "../include/UnionFind.h"
+#include "../include/LeitorInstancia.h"
 
 using namespace std;
 
@@ -145,4 +146,82 @@ void testarUnionFindComGrafo() {
          << g.getNumVertices() - 1 << ")" << endl;
     
     cout << "\n TESTE 3 PASSOU!\n" << endl;
+}
+
+void testarLeituraInstancia() {
+    cout << "\n" << endl;
+    cout << "  TESTE 4: LEITURA DE INSTÂNCIAS      " << endl;
+    cout << "\n" << endl;
+    
+    try {
+        cout << "[1] Lendo instância crd100 com d=3..." << endl;
+        InstanciaDCMST inst = LeitorInstancia::lerMatrizTriangular(
+            "../instancias/dcmst/crd100",
+            3
+        );
+        
+        cout << "[2] Dados da instância carregada:" << endl;
+        cout << "    Nome: " << inst.nomeInstancia << endl;
+        cout << "    Vértices: " << inst.numVertices << endl;
+        cout << "    Grau máximo: " << inst.grauMaximo << endl;
+        cout << "    Arestas: " << inst.grafo.getNumArestas() << endl;
+        
+        cout << "\n[3] Verificando primeiras arestas..." << endl;
+        auto vizinhos = inst.grafo.getVizinhos(0);
+        cout << "    Vértice 0 tem " << vizinhos.size() << " vizinhos" << endl;
+        cout << "    Primeiros 5 vizinhos:" << endl;
+        for (size_t i = 0; i < min(size_t(5), vizinhos.size()); i++) {
+            auto par = vizinhos[i];
+            cout << "      -> Vértice " << par.first 
+                 << " com peso " << par.second << endl;
+        }
+        
+        cout << "\n[4] Verificando simetria do grafo..." << endl;
+        double peso01 = inst.grafo.getPeso(0, 1);
+        double peso10 = inst.grafo.getPeso(1, 0);
+        cout << "    Peso(0,1) = " << peso01 << endl;
+        cout << "    Peso(1,0) = " << peso10 << endl;
+        cout << "    Simétrico? " << (peso01 == peso10 ? "SIM ✓" : "NÃO ✗") << endl;
+        
+        cout << "\n[5] Buscando solução ótima conhecida..." << endl;
+        int otimo = LeitorInstancia::obterSolucaoOtima("crd100", 3);
+        if (otimo != -1) {
+            cout << "    Solução ótima para crd100 d=3: " << otimo << endl;
+        } else {
+            cout << "    [AVISO] Solução ótima não encontrada" << endl;
+        }
+        
+        cout << "\n✓ TESTE 4 PASSOU!\n" << endl;
+        
+    } catch (const exception& e) {
+        cout << "\n TESTE 4 FALHOU!" << endl;
+        cout << "Erro: " << e.what() << endl;
+        cout << "\nVerifique:" << endl;
+        cout << "  1. O arquivo instancias/dcmst/crd100 existe?" << endl;
+        cout << "  2. O caminho está correto?" << endl;
+        cout << "  3. O arquivo tem permissões de leitura?" << endl;
+    }
+}
+
+void testarFormatoGraphEditor() {
+    cout << "\n" << endl;
+    cout << "  TESTE 5: FORMATO GRAPH EDITOR        " << endl;
+    cout << "\n" << endl;
+    
+    // Criar grafo pequeno
+    Grafo g(4);
+    g.adicionarAresta(0, 1, 10);
+    g.adicionarAresta(0, 2, 20);
+    g.adicionarAresta(1, 3, 25);
+    g.adicionarAresta(2, 3, 35);
+    
+    cout << "[1] Imprimindo no console..." << endl;
+    g.imprimirFormatoGraphEditor();
+    
+    cout << "[2] Salvando em arquivo..." << endl;
+    g.salvarFormatoGraphEditor("resultados/grafo_teste.txt");
+    
+    cout << "\n TESTE 5 PASSOU!\n" << endl;
+    cout << "Abra o arquivo resultados/grafo_teste.txt e copie o conteúdo" << endl;
+    cout << "para http://csacademy.com/app/grapheditor/ para visualizar!\n" << endl;
 }
