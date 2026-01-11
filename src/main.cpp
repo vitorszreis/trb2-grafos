@@ -12,6 +12,9 @@ void testarUnionFind();
 void testarUnionFindComGrafo();
 void testarLeituraInstancia();  
 void testarFormatoGraphEditor();
+void testarClasseSolucao();
+void testarCacheOrdenacao();
+
 
 int main(int argc, char* argv[]) {
     cout << "========================================" << endl;
@@ -27,6 +30,8 @@ int main(int argc, char* argv[]) {
         testarUnionFindComGrafo();
         testarLeituraInstancia();
         testarFormatoGraphEditor();
+        testarCacheOrdenacao();
+        testarClasseSolucao();
         
         cout << "\nUso: " << argv[0] << " <algoritmo> <parametros>\n" << endl;
         cout << "Algoritmos disponíveis:" << endl;

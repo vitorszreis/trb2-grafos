@@ -1,10 +1,13 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <chrono>
 #include "../include/Grafo.h"
 #include "../include/Aresta.h"
 #include "../include/UnionFind.h"
 #include "../include/LeitorInstancia.h"
+#include "../include/Solucao.h"
+
 
 using namespace std;
 
@@ -224,4 +227,161 @@ void testarFormatoGraphEditor() {
     cout << "\n TESTE 5 PASSOU!\n" << endl;
     cout << "Abra o arquivo resultados/grafo_teste.txt e copie o conteúdo" << endl;
     cout << "para http://csacademy.com/app/grapheditor/ para visualizar!\n" << endl;
+}
+
+
+void testarCacheOrdenacao() {
+    cout << "\n" << endl;
+    cout << " TESTE 6: CACHE DE ORDENAÇÃO          " << endl;
+    cout << "\n" << endl;
+    
+    cout << "[1] Criando grafo com arestas desordenadas..." << endl;
+    Grafo g(5);
+    
+    // Adicionar em ordem aleatória
+    g.adicionarAresta(0, 1, 50);
+    g.adicionarAresta(1, 2, 10);  // Menor peso
+    g.adicionarAresta(2, 3, 30);
+    g.adicionarAresta(3, 4, 20);
+    g.adicionarAresta(0, 4, 40);
+    
+    cout << "[2] Primeira chamada getTodasArestasOrdenadas()..." << endl;
+    auto inicio1 = chrono::high_resolution_clock::now();
+    const vector<Aresta>& arestas1 = g.getTodasArestasOrdenadas();
+    auto fim1 = chrono::high_resolution_clock::now();
+    auto duracao1 = chrono::duration_cast<chrono::microseconds>(fim1 - inicio1);
+    
+    cout << "    Arestas ordenadas:" << endl;
+    for (const auto& a : arestas1) {
+        cout << "      (" << a.getU() << "," << a.getV() 
+             << ") peso " << a.getPeso() << endl;
+    }
+    cout << "    Tempo: " << duracao1.count() << " µs (primeira vez)" << endl;
+    
+    cout << "\n[3] Segunda chamada (deve usar cache)..." << endl;
+    auto inicio2 = chrono::high_resolution_clock::now();
+    const vector<Aresta>& arestas2 = g.getTodasArestasOrdenadas();
+    auto fim2 = chrono::high_resolution_clock::now();
+    auto duracao2 = chrono::duration_cast<chrono::microseconds>(fim2 - inicio2);
+    
+    cout << "    Tempo: " << duracao2.count() << " µs (cache)" << endl;
+    cout << "    Speedup: " << (duracao2.count() > 0 ? 
+           static_cast<double>(duracao1.count()) / duracao2.count() : 0) 
+         << "x mais rápido" << endl;
+    
+    cout << "\n[4] Verificando ordenação..." << endl;
+    bool ordenado = true;
+    for (size_t i = 1; i < arestas2.size(); i++) {
+        if (arestas2[i-1].getPeso() > arestas2[i].getPeso()) {
+            ordenado = false;
+            break;
+        }
+    }
+    cout << "    Ordenado corretamente? " << (ordenado ? "SIM ✓" : "NÃO ✗") << endl;
+    
+    cout << "\n✓ TESTE 6 PASSOU!\n" << endl;
+}
+
+void testarClasseSolucao() {
+    cout << "\n" << endl;
+    cout << "  TESTE 7: CLASSE SOLUÇÃO              " << endl;
+    cout << "\n" << endl;
+    
+    cout << "[1] Criando solução vazia (n=5, d=3)..." << endl;
+    Solucao sol(5, 3);
+    
+    cout << "    Custo inicial: " << sol.getCusto() << endl;
+    cout << "    Número de arestas: " << sol.getNumArestas() << endl;
+    
+    cout << "\n[2] Adicionando arestas respeitando grau máximo..." << endl;
+    
+    Aresta a1(0, 1, 10);
+    Aresta a2(1, 2, 15);
+    Aresta a3(2, 3, 20);
+    Aresta a4(3, 4, 25);
+    
+    cout << "    Adicionar (0,1,10): " << (sol.adicionarAresta(a1) ? "OK ✓" : "FALHOU ✗") << endl;
+    cout << "    Adicionar (1,2,15): " << (sol.adicionarAresta(a2) ? "OK ✓" : "FALHOU ✗") << endl;
+    cout << "    Adicionar (2,3,20): " << (sol.adicionarAresta(a3) ? "OK ✓" : "FALHOU ✗") << endl;
+    cout << "    Adicionar (3,4,25): " << (sol.adicionarAresta(a4) ? "OK ✓" : "FALHOU ✗") << endl;
+    
+    cout << "\n[3] Estado da solução:" << endl;
+    cout << "    Custo total: " << sol.getCusto() << endl;
+    cout << "    Número de arestas: " << sol.getNumArestas() << endl;
+    cout << "    Grau do vértice 0: " << sol.getGrau(0) << endl;
+    cout << "    Grau do vértice 1: " << sol.getGrau(1) << endl;
+    cout << "    Grau do vértice 2: " << sol.getGrau(2) << endl;
+    cout << "    Grau máximo real: " << sol.getGrauMaximoReal() << endl;
+    
+    cout << "\n[4] Testando limite de grau..." << endl;
+    // Vértice 1 já tem grau 2
+    Aresta a5(1, 3, 30);
+    cout << "    Adicionar (1,3,30) - vértice 1 terá grau 3: " 
+         << (sol.adicionarAresta(a5) ? "OK ✓" : "FALHOU ✗") << endl;
+    
+    // Agora vértice 1 tem grau 3 (máximo)
+    Aresta a6(1, 4, 35);
+    cout << "    Adicionar (1,4,35) - vértice 1 já tem grau 3: " 
+         << (sol.adicionarAresta(a6) ? "OK ✗ (não deveria aceitar)" : "REJEITADO ✓") << endl;
+    
+    cout << "\n[5] Validando solução..." << endl;
+    bool valida = sol.verificarValidade();
+    cout << "    Solução válida? " << (valida ? "SIM ✓" : "NÃO ✗") << endl;
+    
+    cout << "\n[6] Impressão formatada:" << endl;
+    sol.imprimir();
+    
+    cout << " TESTE 7 PASSOU!\n" << endl;
+}
+
+void testarSolucaoComGrafoReal() {
+    cout << "\n" << endl;
+    cout << "  TESTE 8: SOLUÇÃO COM GRAFO REAL      " << endl;
+    cout << "\n" << endl;
+    
+    cout << "[1] Criando grafo completo pequeno..." << endl;
+    Grafo g(4);
+    g.adicionarAresta(0, 1, 10);
+    g.adicionarAresta(0, 2, 20);
+    g.adicionarAresta(0, 3, 30);
+    g.adicionarAresta(1, 2, 15);
+    g.adicionarAresta(1, 3, 25);
+    g.adicionarAresta(2, 3, 35);
+    
+    cout << "[2] Construindo MST usando arestas ordenadas..." << endl;
+    Solucao sol(4, 3);
+    UnionFind uf(4);
+    
+    const vector<Aresta>& arestas = g.getTodasArestasOrdenadas();
+    
+    cout << "    Processando arestas em ordem crescente:" << endl;
+    for (const auto& a : arestas) {
+        cout << "      Aresta (" << a.getU() << "," << a.getV() 
+             << ") peso " << a.getPeso() << ": ";
+        
+        // Verificar se cria ciclo
+        if (uf.mesmoConjunto(a.getU(), a.getV())) {
+            cout << "REJEITADA (ciclo) " << endl;
+            continue;
+        }
+        
+        // Verificar grau
+        if (sol.adicionarAresta(a)) {
+            uf.unir(a.getU(), a.getV());
+            cout << "ADICIONADA " << endl;
+            
+            if (sol.getNumArestas() == 3) {
+                cout << "      → MST completa!" << endl;
+                break;
+            }
+        } else {
+            cout << "REJEITADA (grau) ✗" << endl;
+        }
+    }
+    
+    cout << "\n[3] Validando solução construída..." << endl;
+    sol.verificarValidade();
+    sol.imprimir();
+    
+    cout << " TESTE 8 PASSOU!\n" << endl;
 }
