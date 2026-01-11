@@ -35,7 +35,10 @@ Para remover arquivos compilados:
 
 ### Algoritmo Guloso
 
-    ./programa guloso instancias/exemplo.txt
+    ./programa guloso instancias/exemplo.txt <grau máximo>
+
+    Exemplo:
+    ./programa guloso instancias/exemplo.txt 50
 
 ### Algoritmo GRASP
 

@@ -28,7 +28,7 @@ make
 ## Execução
 
 ```bash
-./programa guloso instancias/exemplo.txt
+./programa guloso instancias/exemplo.txt 1
 ./programa grasp instancias/exemplo.txt 0.3 30
 ./programa reativo instancias/exemplo.txt 300 30
 ```
@@ -36,5 +36,6 @@ make
 ## Integrantes
 
 - Vitor de Souza Reis - 202376036
-- [Nome 2] - [Matrícula]
-- [Nome 3] - [Matrícula]
+- Lara da Silva Dias - 202376010
+- Luiza Caldeira Daniel - 202376012
+- Sarah Cristina Freitas da Silva - 202376034

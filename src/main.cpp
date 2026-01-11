@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
         
         cout << "\nUso: " << argv[0] << " <executavel> <algoritmo> <parametros>\n" << endl;
         cout << "Algoritmos disponíveis:" << endl;
-        cout << "  ./programa guloso <instancia> <d>" << endl;
+        cout << "  ./programa guloso <instancia> <grau>" << endl;
         cout << "  ./programa grasp <instancia> <d> <alfa> <iteracoes>" << endl;
         cout << "  ./programa reativo <instancia> <d> <iteracoes> <tamanho_bloco>\n" << endl;
         return 0;
