@@ -16,7 +16,11 @@ make
 ```
 
 
-Para 
+Para próximas compilacoes
+
+make clean && make
+
+./programa
 
 Isso irá compilar todos os arquivos .cpp e gerar o executável 'programa'.
 
