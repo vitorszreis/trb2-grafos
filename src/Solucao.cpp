@@ -3,6 +3,11 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <ctime>
+
+using namespace std;
 
 Solucao::Solucao(int n, int d) 
     : custo(0), numVertices(n), grauMaximo(d) {
@@ -96,4 +101,46 @@ void Solucao::imprimir() const {
               << getGrauMedio() << std::endl;
     std::cout << "Válida: " << (valida ? "SIM " : "NÃO ") << std::endl;
     std::cout << "========================================\n" << std::endl;
+}
+
+void Solucao::salvarResultado(const string& algoritmo, const string& instancia, int d, 
+                        double tempo, unsigned int seed) const {
+        ofstream arquivo("../resultados/resultados.csv", ios::app);    if (arquivo.is_open()) {
+        //formato: data, instancia, d, algoritmo, parametros, seed, tempo, custo
+        time_t now = time(0);
+        tm *ltm = localtime(&now);
+        
+        arquivo << 1900 + ltm->tm_year << "-" << 1 + ltm->tm_mon << "-" << ltm->tm_mday << ",";
+        arquivo << instancia << ",";
+        arquivo << d << ",";
+        arquivo << algoritmo << ",";
+        arquivo << "N/A" << ","; // parâmetros extras (alfa, iterações)
+        arquivo << seed << ",";
+        arquivo << fixed << setprecision(6) << tempo << ",";
+        arquivo << fixed << setprecision(2) << custo << endl;
+        
+        arquivo.close();
+
+        cout << "[INFO] Resultados salvos em resultados.csv" << endl;
+    } else {
+        cerr << "[AVISO] Nao foi possivel gravar no arquivo CSV." << endl;
+    }
+}
+
+void Solucao::imprimirFormatoGraphEditor() const {
+    std::cout << "\n========================================" << std::endl;
+    std::cout << "  FORMATO GRAPH EDITOR (CS ACADEMY)" << std::endl;
+    std::cout << "========================================" << std::endl;
+    std::cout << "Copie e cole em: https://csacademy.com/app/graph_editor/\n" << std::endl;
+    
+    // Linha 1: n m
+    std::cout << numVertices << " " << arestas.size() << std::endl;
+    
+    // Linhas seguintes: u v peso
+    for (const auto& a : arestas) {
+        std::cout << a.getU() << " " << a.getV() << " " 
+                  << static_cast<int>(a.getPeso()) << std::endl;
+    }
+    
+    std::cout << "\n========================================\n" << std::endl;
 }

@@ -34,8 +34,15 @@ public:
     int getGrauMaximoReal() const;
     double getGrauMedio() const;
     
-    // Impressão
+    // Métodos de saída
     void imprimir() const;
+    void imprimirFormatoGraphEditor() const;
+    void salvarResultado(const std::string& nomeAlgoritmo, 
+                   const std::string& nomeInstancia,
+                   int d,
+                   double tempoExecucao, 
+                   unsigned int seed) const;
+
 };
 
 #endif
