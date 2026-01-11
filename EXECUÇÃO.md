@@ -3,11 +3,23 @@ INSTRUÇÕES DE COMPILAÇÃO E EXECUÇÃO
 
 ## COMPILAÇÃO
 
-No diretório raiz do projeto, execute:
+### Primeira compilação
 
-    make
+```
+mkdir build
+cd build
+cmake ..
+make
+
+./programa
+
+```
+
+
+Para 
 
 Isso irá compilar todos os arquivos .cpp e gerar o executável 'programa'.
+
 
 ## LIMPEZA
 

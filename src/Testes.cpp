@@ -219,7 +219,7 @@ void testarFormatoGraphEditor() {
     g.imprimirFormatoGraphEditor();
     
     cout << "[2] Salvando em arquivo..." << endl;
-    g.salvarFormatoGraphEditor("resultados/grafo_teste.txt");
+    g.salvarFormatoGraphEditor("../resultados/grafo_teste.txt");
     
     cout << "\n TESTE 5 PASSOU!\n" << endl;
     cout << "Abra o arquivo resultados/grafo_teste.txt e copie o conteúdo" << endl;
