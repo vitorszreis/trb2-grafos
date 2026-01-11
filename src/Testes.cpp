@@ -226,7 +226,7 @@ void testarFormatoGraphEditor() {
     
     cout << "\n TESTE 5 PASSOU!\n" << endl;
     cout << "Abra o arquivo resultados/grafo_teste.txt e copie o conteúdo" << endl;
-    cout << "para http://csacademy.com/app/grapheditor/ para visualizar!\n" << endl;
+    cout << "para https://csacademy.com/app/graph_editor/ para visualizar!\n" << endl;
 }
 
 

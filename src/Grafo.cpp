@@ -138,7 +138,7 @@ void Grafo::imprimirFormatoGraphEditor() const {
     std::cout << "\n========================================" << std::endl;
     std::cout << "  FORMATO GRAPH EDITOR (CS ACADEMY)" << std::endl;
     std::cout << "========================================" << std::endl;
-    std::cout << "Copie e cole em: http://csacademy.com/app/grapheditor/\n" << std::endl;
+    std::cout << "Copie e cole em: https://csacademy.com/app/graph_editor/\n" << std::endl;
     
     // Linha 1: n m
     std::cout << numVertices << " " << arestas.size() << std::endl;
