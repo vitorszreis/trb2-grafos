@@ -5,10 +5,14 @@
 #include <vector>
 #include <utility> 
 #include <string>
+#include <algorithm>
+
 
 class Grafo {
 private:
     int numVertices;
+    mutable std::vector<Aresta> cacheArestasOrdenadas;
+    mutable bool cacheValido;
 
     // Lista de adjacência: adj[u] = [(v1, peso1), (v2, peso2), ...]
     std::vector<std::vector<std::pair<int, double>>> adj;
@@ -36,7 +40,9 @@ public:
     // Getters
     int getNumVertices() const;
     int getNumArestas() const;
-    
+
+    const std::vector<Aresta>& getTodasArestasOrdenadas() const;
+
     // Função auxiliar para debug
     void imprimirGrafo() const;
 };

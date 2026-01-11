@@ -4,13 +4,11 @@
 #include <fstream>
 
 // Construtor
-Grafo::Grafo(int n) : numVertices(n) {
+Grafo::Grafo(int n) : numVertices(n), cacheValido(false) {
     adj.resize(n);
 }
 
-// Adiciona aresta NÃO-DIRECIONADA
 void Grafo::adicionarAresta(int u, int v, double peso) {
-    // Validação básica
     if (u < 0 || u >= numVertices || v < 0 || v >= numVertices) {
         std::cerr << "[ERRO] Vértices inválidos: " << u << ", " << v << std::endl;
         return;
@@ -21,9 +19,20 @@ void Grafo::adicionarAresta(int u, int v, double peso) {
         return;
     }
     
-    // Adicionar nos dois sentidos (grafo não-direcionado)
     adj[u].push_back({v, peso});
     adj[v].push_back({u, peso});
+    
+    // Invalidar cache
+    cacheValido = false;
+}
+
+const std::vector<Aresta>& Grafo::getTodasArestasOrdenadas() const {
+    if (!cacheValido) {
+        cacheArestasOrdenadas = getTodasArestas();
+        std::sort(cacheArestasOrdenadas.begin(), cacheArestasOrdenadas.end());
+        cacheValido = true;
+    }
+    return cacheArestasOrdenadas;
 }
 
 // Retorna vizinhos de u
