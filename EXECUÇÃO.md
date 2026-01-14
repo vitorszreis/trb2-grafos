@@ -40,12 +40,15 @@ Para remover arquivos compilados:
     Exemplo:
     ./programa guloso instancias/exemplo.txt 50
 
-### Algoritmo GRASP
+### Algoritmo Guloso Randomizado
 
-    ./programa grasp instancias/exemplo.txt`<alfa>` <num_iteracoes>
+    ./programa randomizado <instancia> <grau_maximo> <alfa>
 
     Exemplo:
-    ./programa grasp instancias/exemplo.txt 0.3 30
+    ./programa randomizado instancias/exemplo.txt 50 0.3
+
+    Você pode definir a semente para garantir reprodutibilidade dos resultados:
+    ./programa --seed=12345 randomizado instancias/exemplo.txt 50 0.3
 
 ### Algoritmo Reativo
 
