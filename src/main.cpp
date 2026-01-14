@@ -2,6 +2,7 @@
 #include <string>
 #include <chrono>
 #include <iomanip>
+#include <ctime>
 
 #include "../include/Grafo.h"
 #include "../include/Aresta.h"
@@ -9,6 +10,7 @@
 #include "../include/UnionFind.h"
 #include "../include/LeitorInstancia.h"
 #include "../include/Algoritmos.h"
+#include "../include/Random.h"
 
 using namespace std;
 
@@ -53,6 +55,8 @@ int main(int argc, char* argv[]) {
     double tempoExecucao = 0.0;
     unsigned int seed = static_cast<unsigned int>(chrono::system_clock::now().time_since_epoch().count()); // semente baseada no tempo atual
 
+    setRandomSeed(time(0)); // inicializa o gerador de números aleatórios
+
     try{
         // seleção do algoritmo
         if (algoritmo == "guloso") {
@@ -77,8 +81,23 @@ int main(int argc, char* argv[]) {
             tempoExecucao = duracao.count();
         } 
         else if (algoritmo == "randomizado") {
-            cout << "Algoritmo Randomizado ainda não implementado." << endl;
-            return 0;
+            if(argc != 5) {
+                cerr << "[ERRO]: Numero incorreto de parametros para o algoritmo randomizado." << endl;
+                cerr << "Uso: ./programa randomizado <caminho_instancia> <d> <alfa>" << endl;
+                return 1;
+            }
+            nomeInstancia = argv[2];
+            d = stoi(argv[3]);
+            double alfa = stod(argv[4]);
+            string caminhoInstancia = "../instancias/dcmst/" + nomeInstancia;
+        
+            InstanciaDCMST instancia = LeitorInstancia::lerMatrizTriangular(caminhoInstancia, d);
+        
+            auto inicio = chrono::high_resolution_clock::now();
+            solucao = algoritmoGulosoRandomizado(instancia.grafo, d, alfa);
+            auto fim = chrono::high_resolution_clock::now();
+            chrono::duration<double> duracao = fim - inicio;
+            tempoExecucao = duracao.count();
         }
         else if (algoritmo == "reativo") {
             cout << "Algoritmo Reativo ainda não implementado." << endl;
