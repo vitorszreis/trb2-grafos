@@ -20,6 +20,15 @@ public:
     // Adiciona aresta se respeitar limite de grau
     bool adicionarAresta(const Aresta& a);
     
+    // Remove uma aresta da solução
+    bool removerAresta(int u, int v);
+    
+    // Limpa a solução (remove todas as arestas)
+    void limpar();
+    
+    // Reconstrói graus a partir das arestas (útil após modificações)
+    void recalcularGraus();
+    
     // Verifica validade (n-1 arestas, conectividade)
     bool verificarValidade();
     
@@ -27,6 +36,8 @@ public:
     double getCusto() const;
     int getGrau(int v) const;
     int getNumArestas() const;
+    int getNumVertices() const;
+    int getGrauMaximo() const;
     bool isValida() const;
     const std::vector<Aresta>& getArestas() const;
     

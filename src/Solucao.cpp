@@ -29,6 +29,45 @@ bool Solucao::adicionarAresta(const Aresta& a) {
     return true;
 }
 
+bool Solucao::removerAresta(int u, int v) {
+    for (auto it = arestas.begin(); it != arestas.end(); ++it) {
+        if ((it->getU() == u && it->getV() == v) ||
+            (it->getU() == v && it->getV() == u)) {
+            custo -= it->getPeso();
+            graus[u]--;
+            graus[v]--;
+            arestas.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+void Solucao::limpar() {
+    arestas.clear();
+    custo = 0;
+    fill(graus.begin(), graus.end(), 0);
+    valida = false;
+}
+
+void Solucao::recalcularGraus() {
+    fill(graus.begin(), graus.end(), 0);
+    custo = 0;
+    for (const auto& a : arestas) {
+        graus[a.getU()]++;
+        graus[a.getV()]++;
+        custo += a.getPeso();
+    }
+}
+
+int Solucao::getNumVertices() const {
+    return numVertices;
+}
+
+int Solucao::getGrauMaximo() const {
+    return grauMaximo;
+}
+
 bool Solucao::verificarValidade() {
     // Verificar número de arestas
     if (static_cast<int>(arestas.size()) != numVertices - 1) {

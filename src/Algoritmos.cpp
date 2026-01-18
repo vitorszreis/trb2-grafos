@@ -115,6 +115,9 @@ Solucao algoritmoGulosoRandomizado(const Grafo& grafo, int d, double alfa) {
             }
         }
 
+        // BUSCA LOCAL: melhora a solução até ótimo local
+        solucao = buscaLocal(grafo, solucao);
+
         // Verifica se a solução é válida
         if (!solucao.verificarValidade()) {
             cerr << "Aviso: Randomizado não conseguiu conectar todo o grafo com d="
@@ -271,6 +274,10 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
 
        //construção da solução
         Solucao solucaoAtual = construirSolucaoGulosa(alphaEscolhido);
+        
+        // BUSCA LOCAL: melhora a solução até ótimo local
+        solucaoAtual = buscaLocal(grafo, solucaoAtual);
+        
         double pesoAtual = solucaoAtual.getCusto();
 
 
@@ -324,4 +331,99 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
     melhorSolucaoGlobal.verificarValidade();
 
     return melhorSolucaoGlobal;
+}
+
+/**
+ * Busca Local por Edge Swap para DC-MST
+ * 
+ * Funcionamento:
+ * 1. Para cada aresta (u,v) da árvore atual
+ * 2. Remover (u,v) divide a árvore em 2 componentes
+ * 3. Procurar aresta (a,b) que reconecta os componentes com menor custo
+ * 4. Se custo(a,b) < custo(u,v) e graus respeitados, fazer a troca
+ * 5. Repetir até não haver melhoria (ótimo local)
+ */
+Solucao buscaLocal(const Grafo& grafo, Solucao solucao) {
+    int n = solucao.getNumVertices();
+    int d = solucao.getGrauMaximo();
+    
+    if (!solucao.verificarValidade()) {
+        return solucao; // Não tenta melhorar solução inválida
+    }
+    
+    bool melhorou = true;
+    
+    while (melhorou) {
+        melhorou = false;
+        
+        const vector<Aresta>& arestasAtuais = solucao.getArestas();
+        int numArestas = arestasAtuais.size();
+        
+        // Para cada aresta da solução atual
+        for (int i = 0; i < numArestas && !melhorou; i++) {
+            const Aresta& arestaRemover = arestasAtuais[i];
+            int u = arestaRemover.getU();
+            int v = arestaRemover.getV();
+            double pesoRemover = arestaRemover.getPeso();
+            
+            // Simular remoção: determinar componentes
+            // Criar Union-Find sem a aresta (u,v)
+            UnionFind uf(n);
+            for (int j = 0; j < numArestas; j++) {
+                if (j != i) { // Pula a aresta que estamos removendo
+                    uf.unir(arestasAtuais[j].getU(), arestasAtuais[j].getV());
+                }
+            }
+            
+            // Agora u e v estão em componentes diferentes
+            // Procurar aresta (a,b) que reconecta com menor custo
+            const vector<Aresta>& todasArestas = grafo.getTodasArestasOrdenadas();
+            
+            for (const auto& arestaAdd : todasArestas) {
+                int a = arestaAdd.getU();
+                int b = arestaAdd.getV();
+                double pesoAdd = arestaAdd.getPeso();
+                
+                // Só interessa se custo menor
+                if (pesoAdd >= pesoRemover) {
+                    continue; // Arestas estão ordenadas, pode parar se não for menor
+                }
+                
+                // Verificar se reconecta os componentes
+                if (uf.find(a) != uf.find(b)) {
+                    // Verificar se já está na árvore
+                    bool jaExiste = false;
+                    for (const auto& existente : arestasAtuais) {
+                        if ((existente.getU() == a && existente.getV() == b) ||
+                            (existente.getU() == b && existente.getV() == a)) {
+                            jaExiste = true;
+                            break;
+                        }
+                    }
+                    if (jaExiste) continue;
+                    
+                    // Verificar restrições de grau
+                    int grauA = solucao.getGrau(a);
+                    int grauB = solucao.getGrau(b);
+                    
+                    // Se a ou b era endpoint da aresta removida, seu grau será -1
+                    if (a == u || a == v) grauA--;
+                    if (b == u || b == v) grauB--;
+                    
+                    // Após adicionar (a,b), graus serão grauA+1 e grauB+1
+                    if (grauA + 1 <= d && grauB + 1 <= d) {
+                        // Fazer a troca!
+                        solucao.removerAresta(u, v);
+                        Aresta novaAresta(a, b, pesoAdd);
+                        solucao.adicionarAresta(novaAresta);
+                        melhorou = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    solucao.verificarValidade();
+    return solucao;
 }
