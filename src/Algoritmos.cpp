@@ -6,6 +6,8 @@
 #include <vector>
 #include <ctime>
 
+#define REP_MAX 10
+
 using namespace std;
 
 Solucao algoritmoGuloso(const Grafo& grafo, int d) {
@@ -54,68 +56,79 @@ Solucao algoritmoGuloso(const Grafo& grafo, int d) {
 
 Solucao algoritmoGulosoRandomizado(const Grafo& grafo, int d, double alfa) {
     int n = grafo.getNumVertices();
-    Solucao solucao(n, d);
-    UnionFind uf(n);
+    Solucao melhorSolucao(n, d);
+    double melhorCusto = 1e18;
 
-    // Arestas  ordenadas por peso
-    const vector<Aresta>& arestas = grafo.getTodasArestasOrdenadas();
-    int arestasAdicionadas = 0;
+    for (int rep = 0; rep < REP_MAX; ++rep) {
+        Solucao solucao(n, d);
+        UnionFind uf(n);
 
-    while (arestasAdicionadas < n - 1) {
-        // Monta lista de candidatos viáveis
-        vector<Aresta> candidatos;
-        double custoMin = 1e9, custoMax = -1e9;
+        // Arestas  ordenadas por peso
+        const vector<Aresta>& arestas = grafo.getTodasArestasOrdenadas();
+        int arestasAdicionadas = 0;
 
-        for (const auto& a : arestas) {
-            int u = a.getU(), v = a.getV();
-            if (uf.find(u) != uf.find(v) &&
-                solucao.getGrau(u) < d &&
-                solucao.getGrau(v) < d) {
-                candidatos.push_back(a);
-                double peso = a.getPeso();
-                custoMin = min(custoMin, peso);
-                custoMax = max(custoMax, peso);
+        while (arestasAdicionadas < n - 1) {
+            // Monta lista de candidatos viáveis
+            vector<Aresta> candidatos;
+            double custoMin = 1e9, custoMax = -1e9;
+
+            for (const auto& a : arestas) {
+                int u = a.getU(), v = a.getV();
+                if (uf.find(u) != uf.find(v) &&
+                    solucao.getGrau(u) < d &&
+                    solucao.getGrau(v) < d) {
+                    candidatos.push_back(a);
+                    double peso = a.getPeso();
+                    custoMin = min(custoMin, peso);
+                    custoMax = max(custoMax, peso);
+                }
+            }
+
+            if (candidatos.empty()) {
+                cerr << "Não foi possível adicionar mais arestas sem violar o limite de grau." << endl;
+                break;
+            }
+
+            // Lista de Candidatos Restritos
+            vector<Aresta> rcl;
+            double limite = custoMin + alfa * (custoMax - custoMin);
+            for (const auto& a : candidatos) {
+                if (a.getPeso() <= limite) {
+                    rcl.push_back(a);
+                }
+            }
+
+            if (rcl.empty()) {
+                cerr << "RCL vazia! Ajuste o valor de alfa." << endl;
+                break;
+            }
+
+            // Escolhe aleatoriamente uma aresta da RCL
+            int idx = randomInt(0, rcl.size() - 1);
+            const Aresta& escolhida = rcl[idx];
+
+            int u = escolhida.getU();
+            int v = escolhida.getV();
+            if (solucao.adicionarAresta(escolhida)) {
+                uf.unir(u, v);
+                arestasAdicionadas++;
             }
         }
 
-        if (candidatos.empty()) {
-            cerr << "Não foi possível adicionar mais arestas sem violar o limite de grau." << endl;
-            break;
+        // Verifica se a solução é válida
+        if (!solucao.verificarValidade()) {
+            cerr << "Aviso: Randomizado não conseguiu conectar todo o grafo com d="
+                << d << " e alfa=" << alfa << endl;
         }
 
-        // Lista de Candidatos Restritos
-        vector<Aresta> rcl;
-        double limite = custoMin + alfa * (custoMax - custoMin);
-        for (const auto& a : candidatos) {
-            if (a.getPeso() <= limite) {
-                rcl.push_back(a);
-            }
-        }
-
-        if (rcl.empty()) {
-            cerr << "RCL vazia! Ajuste o valor de alfa." << endl;
-            break;
-        }
-
-        // Escolhe aleatoriamente uma aresta da RCL
-        int idx = randomInt(0, rcl.size() - 1);
-        const Aresta& escolhida = rcl[idx];
-
-        int u = escolhida.getU();
-        int v = escolhida.getV();
-        if (solucao.adicionarAresta(escolhida)) {
-            uf.unir(u, v);
-            arestasAdicionadas++;
+        double custo = solucao.getCusto();
+        cout << "[Randomizado] Execução " << (rep+1) << "/" << REP_MAX << ": custo = " << custo << endl;
+        if (solucao.verificarValidade() && custo < melhorCusto) {
+            melhorCusto = custo;
+            melhorSolucao = solucao;
         }
     }
-
-    // Verifica se a solução é válida
-    if (!solucao.verificarValidade()) {
-        cerr << "Aviso: Randomizado não conseguiu conectar todo o grafo com d="
-            << d << " e alfa=" << alfa << endl;
-    }
-
-    return solucao;
+    return melhorSolucao;
 }
 Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::vector<double>& alphas, int iteracoesPorBloco, int maxIteracoesTotal) {
     int n = grafo.getNumVertices();  
@@ -163,7 +176,7 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
 
         if(iteracao > 0 && iteracao % iteracoesPorBloco == 0) {
             cout << "\n[Bloco " << (iteracao / iteracoesPorBloco)
-                 << "] Atualizando probabilidades..." << endl;
+                << "] Atualizando probabilidades..." << endl;
             
             vector<double> medias(m, 0.0);
 
