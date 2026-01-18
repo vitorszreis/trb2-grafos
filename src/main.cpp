@@ -53,9 +53,9 @@ int main(int argc, char* argv[]) {
     string nomeInstancia;
     int d = 0;
     double tempoExecucao = 0.0;
+    
     unsigned int seed = static_cast<unsigned int>(chrono::system_clock::now().time_since_epoch().count()); // semente baseada no tempo atual
-
-    setRandomSeed(time(0)); // inicializa o gerador de números aleatórios
+    setRandomSeed(seed); // inicializa o gerador de números aleatórios
 
     try{
         // seleção do algoritmo
