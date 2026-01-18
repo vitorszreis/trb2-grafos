@@ -27,11 +27,45 @@ make
 
 ## Execução
 
+Após compilar o projeto, execute o programa com o seguinte formato:
+
 ```bash
-./programa guloso instancias/exemplo.txt 1
-./programa grasp instancias/exemplo.txt 0.3 30
-./programa reativo instancias/exemplo.txt 300 30
+./programa <algoritmo> <arquivo_instancia> [parametros]
 ```
+
+- `<algoritmo>`: Algoritmo a ser utilizado (`guloso`, `randomizado` ou `reativo`)
+- `<arquivo_instancia>`: Nome do arquivo de instância (ex: `crd100`).  
+  **Observação:** `crd100` é apenas um exemplo; você pode utilizar qualquer outro arquivo de instância disponível, bastando informar o nome correspondente.
+- `[parametros]`: Parâmetros adicionais, dependendo do algoritmo escolhido
+
+### Exemplos
+
+**Guloso**
+
+```bash
+./programa guloso crd100 1
+```
+
+- `1`: Limite de grau máximo dos vértices
+
+**Randomizado**
+
+```bash
+./programa randomizado crd100 0.3 30
+```
+
+- `0.3`: Parâmetro alfa (controle de aleatoriedade)
+- `30`: Limite de grau máximo dos vértices
+
+**Reativo**
+
+```bash
+./programa reativo crd100 300 30
+```
+
+- `300`: Número de iterações totais
+- `30`: Limite de grau máximo dos vértices
+
 
 ## Integrantes
 
