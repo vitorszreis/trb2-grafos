@@ -52,10 +52,10 @@ Para remover arquivos compilados:
 
 ### Algoritmo Reativo
 
-    ./programa reativo <nome instancia> <num_iteracoes> <tamanho_bloco>
+    ./programa reativo <nome instancia> <grau_maximo> <num_iteracoes> <tamanho_bloco>
 
     Exemplo:
-    ./programa reativo <nome instancia> 300 30
+    ./programa reativo crd100 3 100 10
 
 
 ## FORMATO DAS INSTÂNCIAS

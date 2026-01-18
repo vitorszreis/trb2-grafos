@@ -51,21 +51,21 @@ Após compilar o projeto, execute o programa com o seguinte formato:
 **Randomizado**
 
 ```bash
-./programa randomizado crd100 0.3 30
+./programa randomizado crd100 50 0.3
 ```
 
+- `50`: Limite de grau máximo dos vértices
 - `0.3`: Parâmetro alfa (controle de aleatoriedade)
-- `30`: Limite de grau máximo dos vértices
 
 **Reativo**
 
 ```bash
-./programa reativo crd100 300 30
+./programa reativo crd100 3 100 10
 ```
 
-- `300`: Número de iterações totais
-- `30`: Limite de grau máximo dos vértices
-
+- `3`: Limite de grau máximo dos vértices
+- `100`: Número de iterações totais
+- `10`: Limite de grau máximo dos vértices
 
 ## Integrantes
 
