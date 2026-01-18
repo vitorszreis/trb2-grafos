@@ -13,3 +13,7 @@ int randomInt(int min, int max) {
    uniform_int_distribution<int> dist(min, max);
    return dist(rng);
 }
+double randomDouble(double min, double max) {
+   uniform_real_distribution<double> dist(min, max);
+   return dist(rng);
+}
