@@ -6,7 +6,7 @@
 #include <vector>
 #include <ctime>
 
-#define REP_MAX 10
+#define REP_MAX 30
 
 using namespace std;
 
@@ -125,7 +125,7 @@ Solucao algoritmoGulosoRandomizado(const Grafo& grafo, int d, double alfa) {
         }
 
         double custo = solucao.getCusto();
-        cout << "[Randomizado] Execução " << (rep+1) << "/" << REP_MAX << ": custo = " << custo << endl;
+        //cout << "[Randomizado] Execução " << (rep+1) << "/" << REP_MAX << ": custo = " << custo << endl;
         if (solucao.verificarValidade() && custo < melhorCusto) {
             melhorCusto = custo;
             melhorSolucao = solucao;
@@ -151,10 +151,10 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
     // cout << endl;
 
 
-//Loop principal
+    //Loop principal
     for(int iteracao = 0; iteracao < maxIteracoesTotal; iteracao++) {
 
-//atualização das probabilidades por bloco
+    //atualização das probabilidades por bloco
         if(iteracao > 0 && iteracao % iteracoesPorBloco == 0) {
             
             vector<double> medias(m, 0.0);
@@ -191,7 +191,7 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
                 }
             }
         }
-//Escolha do Alpha
+    //Escolha do Alpha
         double alphaEscolhido;
         int idxAlphaEscolhido;
 
@@ -214,7 +214,7 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
             idxAlphaEscolhido = m - 1;
         }
 
-//Função para construir a solução gulosa randomizada (la,bda)
+    //Função para construir a solução gulosa randomizada (la,bda)
         auto construirSolucaoGulosa = [&](double alpha) -> Solucao {
             int n_local = grafo.getNumVertices();
             Solucao solucao(n_local, d);
@@ -293,7 +293,7 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
         mediasQualidade[idxAlphaEscolhido] = somaLocal / historicoQualidade[idxAlphaEscolhido].size();
 
 
-//Atualiza melhor solução Global
+        //Atualiza melhor solução Global
         if(pesoAtual < melhorPesoGlobal) {
             melhorSolucaoGlobal = solucaoAtual;  
             melhorPesoGlobal = pesoAtual;        
@@ -302,7 +302,7 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
 
 
     // Exibe desempenho dos alphas    
-    cout << "DESEMPENHO DOS ALPHAS:" << endl;
+    //cout << "DESEMPENHO DOS ALPHAS:" << endl;
     for (int i = 0; i < m; i++) {
         if (contadorUsos[i] > 0) {
             double soma = 0.0;
@@ -315,15 +315,15 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
             
             double media = soma / historicoQualidade[i].size();
             
-            cout << "Alpha " << alphas[i] 
+            /*cout << "Alpha " << alphas[i] 
                 << ": usado " << contadorUsos[i] << " vezes"
                 << ", média: " << fixed << setprecision(2) << media
                 << ", melhor: " << melhorLocal
-                << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
+                << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl; */
         } else {
-            cout << "Alpha " << alphas[i] 
+            /*cout << "Alpha " << alphas[i] 
                 << ": não foi usado" 
-                << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
+                << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;*/
         }
     }
     
@@ -333,16 +333,7 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
     return melhorSolucaoGlobal;
 }
 
-/**
- * Busca Local por Edge Swap para DC-MST
- * 
- * Funcionamento:
- * 1. Para cada aresta (u,v) da árvore atual
- * 2. Remover (u,v) divide a árvore em 2 componentes
- * 3. Procurar aresta (a,b) que reconecta os componentes com menor custo
- * 4. Se custo(a,b) < custo(u,v) e graus respeitados, fazer a troca
- * 5. Repetir até não haver melhoria (ótimo local)
- */
+
 Solucao buscaLocal(const Grafo& grafo, Solucao solucao) {
     int n = solucao.getNumVertices();
     int d = solucao.getGrauMaximo();
