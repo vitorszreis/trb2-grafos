@@ -329,7 +329,7 @@ void testarClasseSolucao() {
     cout << "    Solução válida? " << (valida ? "SIM ✓" : "NÃO ✗") << endl;
     
     cout << "\n[6] Impressão formatada:" << endl;
-    sol.imprimir();
+    sol.imprimir(0);
     
     cout << " TESTE 7 PASSOU!\n" << endl;
 }
@@ -381,7 +381,7 @@ void testarSolucaoComGrafoReal() {
     
     cout << "\n[3] Validando solução construída..." << endl;
     sol.verificarValidade();
-    sol.imprimir();
+    sol.imprimir(0);
     
     cout << " TESTE 8 PASSOU!\n" << endl;
 }

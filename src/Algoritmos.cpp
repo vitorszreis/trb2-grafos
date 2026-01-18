@@ -369,14 +369,14 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
             double media = soma / historicoQualidade[i].size();
             
             cout << "Alpha " << alphas[i] 
-                 << ": usado " << contadorUsos[i] << " vezes"
-                 << ", média: " << fixed << setprecision(2) << media
-                 << ", melhor: " << melhorLocal
-                 << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
+                << ": usado " << contadorUsos[i] << " vezes"
+                << ", média: " << fixed << setprecision(2) << media
+                << ", melhor: " << melhorLocal
+                << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
         } else {
             cout << "Alpha " << alphas[i] 
-                 << ": não foi usado" 
-                 << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
+                << ": não foi usado" 
+                << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
         }
     }
     
