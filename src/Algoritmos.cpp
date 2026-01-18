@@ -135,20 +135,6 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
     int n = grafo.getNumVertices();  
     int m = alphas.size(); 
 
-    cout << "\n=======================================" << endl;
-    cout << "ALGORITMO GULOSO RANDOMIZADO REATIVO" << endl;
-    cout << "=======================================" << endl;
-    cout << "Vértices: " << n << endl;
-    cout << "Grau máximo: d = " << d << endl;
-    cout << "Alphas: ";
-
-    for(double a: alphas) cout << a << " ";
-    cout << endl;
-    cout << "Iterações por bloco: " << iteracoesPorBloco << endl;
-    cout << "Iterações totais: " << maxIteracoesTotal << endl;
-    cout << "=======================================\n" << endl;
-
-  
     vector<double> probabilidades(m, 1.0/m);
     vector<vector<double>> historicoQualidade(m);
     vector<int> contadorUsos(m, 0);
@@ -157,21 +143,16 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
     Solucao melhorSolucaoGlobal(n, d);
     double melhorPesoGlobal = 1e18;
 
-    cout << "Estruturas inicializadas com sucesso!" << endl;
-    cout << "Probabilidades iniciais: ";
-    for(double p: probabilidades) cout << fixed << setprecision(3) << p << " ";
-    cout << endl;
+    // cout << "Probabilidades iniciais: ";
+    // for(double p: probabilidades) cout << fixed << setprecision(3) << p << " ";
+    // cout << endl;
 
-    cout << "\nIniciando loop principal" << endl;
 
 //Loop principal
     for(int iteracao = 0; iteracao < maxIteracoesTotal; iteracao++) {
-        cout << "\n--- Iteração " << (iteracao + 1) << " ---" << endl;
 
 //atualização das probabilidades por bloco
         if(iteracao > 0 && iteracao % iteracoesPorBloco == 0) {
-            cout << "\n[Bloco " << (iteracao / iteracoesPorBloco)
-                << "] Atualizando probabilidades..." << endl;
             
             vector<double> medias(m, 0.0);
 
@@ -202,27 +183,10 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
                     probabilidades[i] = qValues[i] / somaQ;
                 }
             } else {
-                cout << "  Aviso: Todos q_i são zero, mantendo probabilidades uniformes" << endl;
                 for(int i = 0; i < m; i++) {
                     probabilidades[i] = 1.0 / m;
                 }
             }
-
-            cout << "  Novas probabilidades: ";
-            for(int i = 0; i < m; i++) {
-                cout << "α " << alphas[i] << "= " << fixed << setprecision(3) << probabilidades[i] << " ";
-            }
-            cout << endl;
-
-            cout << "  Médias dos alphas: ";
-            for(int i = 0; i < m; i++) {
-                if(contadorUsos[i] > 0) {
-                    cout << "α " << alphas[i] << "= " << fixed << setprecision(2) << medias[i] << " ";
-                } else {
-                    cout << "α " << alphas[i] << "= N/A ";
-                }
-            }
-            cout << endl;
         }
 //Escolha do Alpha
         double alphaEscolhido;
@@ -246,10 +210,6 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
             alphaEscolhido = alphas[m - 1];
             idxAlphaEscolhido = m - 1;
         }
-
-        cout << "  Alpha escolhido: " << alphaEscolhido
-             << " (probabilidade: " << fixed << setprecision(3)
-             << probabilidades[idxAlphaEscolhido] << ")" << endl;
 
 //Função para construir a solução gulosa randomizada (la,bda)
         auto construirSolucaoGulosa = [&](double alpha) -> Solucao {
@@ -313,7 +273,6 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
         Solucao solucaoAtual = construirSolucaoGulosa(alphaEscolhido);
         double pesoAtual = solucaoAtual.getCusto();
 
-        cout << "  Peso da solução: " << pesoAtual << endl;
 
         //atualizar estatisticas
         contadorUsos[idxAlphaEscolhido]++;
@@ -326,36 +285,17 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
         }
         mediasQualidade[idxAlphaEscolhido] = somaLocal / historicoQualidade[idxAlphaEscolhido].size();
 
-        cout << "  Média atual deste alpha: " << mediasQualidade[idxAlphaEscolhido] << endl;
 
 //Atualiza melhor solução Global
         if(pesoAtual < melhorPesoGlobal) {
             melhorSolucaoGlobal = solucaoAtual;  
             melhorPesoGlobal = pesoAtual;        
-            cout << "  *** NOVA MELHOR SOLUÇÃO ENCONTRADA! ***" << endl;
-            cout << "      Peso: " << pesoAtual << endl;
-            cout << "      Alpha usado: " << alphaEscolhido << endl;
-        }
-
-    //log de Progresso
-        if((iteracao + 1) % 10 == 0) {
-            cout << "\n[Progresso] Iteração " << setw(3) << (iteracao + 1) 
-                 << "/" << maxIteracoesTotal << endl;
-            cout << "  Melhor peso até agora: " << melhorPesoGlobal << endl;
-            cout << "  Distribuição de uso dos Alphas: ";
-            for(int i = 0; i < m; i++) {
-                cout << "α " << alphas[i] << ": " << contadorUsos[i] << " ";
-            }
-            cout << endl;
         }
     }
 
-   //Relatorio Final
-    cout << "\n========================================" << endl;
-    cout << "         RELATÓRIO FINAL               " << endl;
-    cout << "========================================" << endl;
-    
-    cout << "\nDESEMPENHO DOS ALPHAS:" << endl;
+
+    // Exibe desempenho dos alphas    
+    cout << "DESEMPENHO DOS ALPHAS:" << endl;
     for (int i = 0; i < m; i++) {
         if (contadorUsos[i] > 0) {
             double soma = 0.0;
@@ -382,11 +322,6 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
     
     // Verifica validade
     melhorSolucaoGlobal.verificarValidade();
-    
-    cout << "\nMELHOR SOLUÇÃO ENCONTRADA:" << endl;
-    cout << "  Peso total: " << fixed << setprecision(2) << melhorPesoGlobal << endl;
-    cout << "  Solução válida: " << (melhorSolucaoGlobal.isValida() ? "SIM ✓" : "NÃO ✗") << endl;
-    cout << "========================================\n" << endl;
 
     return melhorSolucaoGlobal;
 }
