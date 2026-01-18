@@ -3,6 +3,7 @@
 #include <chrono>
 #include <iomanip>
 #include <ctime>
+#include <cstring>
 
 #include "../include/Grafo.h"
 #include "../include/Aresta.h"
@@ -28,6 +29,15 @@ int main(int argc, char* argv[]) {
     cout << "   DC-MST - Trabalho de Grafos          " << endl;
     cout << "========================================" << endl;
 
+    unsigned int seed = static_cast<unsigned int>(chrono::system_clock::now().time_since_epoch().count()); // semente baseada no tempo atual
+
+    // Se o último argumento for --seed=VALOR, use esse valor
+    if (argc > 1 && strncmp(argv[argc-1], "--seed=", 7) == 0) {
+        seed = static_cast<unsigned int>(std::stoul(argv[argc-1] + 7));
+        argc--; // ignora o argumento da seed nos próximos testes de quantidade de argumentos
+    }
+    setRandomSeed(seed); // inicializa o gerador de números aleatórios
+
     if (argc < 2) {
         cout << "\n[INFO] Nenhum algoritmo especificado." << endl;
         cout << "[INFO] Executando testes básicos...\n" << endl;
@@ -43,7 +53,7 @@ int main(int argc, char* argv[]) {
         cout << "\nUso: " << argv[0] << " <executavel> <algoritmo> <parametros>\n" << endl;
         cout << "Algoritmos disponíveis:" << endl;
         cout << "  ./programa guloso <instancia> <grau>" << endl;
-        cout << "  ./programa grasp <instancia> <d> <alfa> <iteracoes>" << endl;
+        cout << "  ./programa randomizado <instancia> <d> <alfa> <iteracoes>" << endl;
         cout << "  ./programa reativo <instancia> <d> <iteracoes> <tamanho_bloco>\n" << endl;
         return 0;
     }
@@ -53,9 +63,7 @@ int main(int argc, char* argv[]) {
     string nomeInstancia;
     int d = 0;
     double tempoExecucao = 0.0;
-    unsigned int seed = static_cast<unsigned int>(chrono::system_clock::now().time_since_epoch().count()); // semente baseada no tempo atual
-
-    setRandomSeed(time(0)); // inicializa o gerador de números aleatórios
+    
 
     try{
         // seleção do algoritmo
@@ -169,7 +177,12 @@ else if (algoritmo == "reativo") {
 }
 
         // exibição dos resultados
-        solucao.imprimir(); 
+        if(algoritmo == "guloso"){
+            solucao.imprimir(0); 
+        }
+        else{
+            solucao.imprimir(seed); 
+        }
         
         //gravação de dados para estatística (CSV)
         solucao.salvarResultado(algoritmo, nomeInstancia, d, tempoExecucao, seed);

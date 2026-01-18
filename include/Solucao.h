@@ -35,7 +35,7 @@ public:
     double getGrauMedio() const;
     
     // Métodos de saída
-    void imprimir() const;
+    void imprimir(unsigned int seed) const;
     void imprimirFormatoGraphEditor() const;
     void salvarResultado(const std::string& nomeAlgoritmo, 
                    const std::string& nomeInstancia,

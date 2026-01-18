@@ -87,7 +87,7 @@ double Solucao::getGrauMedio() const {
     return soma / numVertices;
 }
 
-void Solucao::imprimir() const {
+void Solucao::imprimir(unsigned int seed) const {
     std::cout << "\n========================================" << std::endl;
     std::cout << "           SOLUÇÃO DC-MST               " << std::endl;
     std::cout << "========================================" << std::endl;
@@ -99,12 +99,12 @@ void Solucao::imprimir() const {
     std::cout << "Grau máximo real: " << getGrauMaximoReal() << std::endl;
     std::cout << "Grau médio: " << std::fixed << std::setprecision(2) 
               << getGrauMedio() << std::endl;
+    std::cout << (seed != 0 ? "Semente usada: " + std::to_string(seed) : "") << std::endl;
     std::cout << "Válida: " << (valida ? "SIM " : "NÃO ") << std::endl;
     std::cout << "========================================\n" << std::endl;
 }
 
-void Solucao::salvarResultado(const string& algoritmo, const string& instancia, int d, 
-                        double tempo, unsigned int seed) const {
+void Solucao::salvarResultado(const string& algoritmo, const string& instancia, int d, double tempo, unsigned int seed) const {
         ofstream arquivo("../resultados/resultados.csv", ios::app);    if (arquivo.is_open()) {
         //formato: data, instancia, d, algoritmo, parametros, seed, tempo, custo
         time_t now = time(0);
@@ -139,7 +139,7 @@ void Solucao::imprimirFormatoGraphEditor() const {
     // Linhas seguintes: u v peso
     for (const auto& a : arestas) {
         std::cout << a.getU() << " " << a.getV() << " " 
-                  << static_cast<int>(a.getPeso()) << std::endl;
+                << static_cast<int>(a.getPeso()) << std::endl;
     }
     
     std::cout << "\n========================================\n" << std::endl;

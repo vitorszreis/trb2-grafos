@@ -130,53 +130,29 @@ Solucao algoritmoGulosoRandomizado(const Grafo& grafo, int d, double alfa) {
     }
     return melhorSolucao;
 }
-Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::vector<double>& alphas, int iteracoesPorBloco, int maxIteracoesTotal) {
+Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::vector<double>& alphas,int iteracoesPorBloco,int maxIteracoesTotal) {
+    
     int n = grafo.getNumVertices();  
     int m = alphas.size(); 
 
-    cout << "\n=======================================" << endl;
-    cout << "ALGORITMO GULOSO RANDOMIZADO REATIVO" << endl;
-    cout << "=======================================" << endl;
-    cout << "Vértices: " << n << endl;
-    cout << "Grau máximo: d = " << d << endl;
-    cout << "Alphas: ";
-
-    for(double a: alphas) cout << a << " ";
-    cout << endl;
-    cout << "Iterações por bloco: " << iteracoesPorBloco << endl;
-    cout << "Iterações totais: " << maxIteracoesTotal << endl;
-    cout << "=======================================\n" << endl;
-
-    // Array de probabilidades para cada alpha
     vector<double> probabilidades(m, 1.0/m);
-    
-    // Histórico de pesos para cada alpha
     vector<vector<double>> historicoQualidade(m);
-
-    // Contador de uso de cada alpha
     vector<int> contadorUsos(m, 0);
-
-    // Media da qualidade para cada alpha
     vector<double> mediasQualidade(m, 0.0);
-
+    
     Solucao melhorSolucaoGlobal(n, d);
     double melhorPesoGlobal = 1e18;
 
-    cout << "Estruturas inicializadas com sucesso!" << endl;
-    cout << "Probabilidades iniciais: ";
+    // cout << "Probabilidades iniciais: ";
+    // for(double p: probabilidades) cout << fixed << setprecision(3) << p << " ";
+    // cout << endl;
 
-    for(double p: probabilidades) cout << fixed << setprecision(3) << p << " ";
-    cout << endl;
 
-    cout << "\nIniciando loop principal" << endl;
-
+//Loop principal
     for(int iteracao = 0; iteracao < maxIteracoesTotal; iteracao++) {
-        cout << "\n--- Iteração " << (iteracao + 1) << " ---" << endl;
 
-
+//atualização das probabilidades por bloco
         if(iteracao > 0 && iteracao % iteracoesPorBloco == 0) {
-            cout << "\n[Bloco " << (iteracao / iteracoesPorBloco)
-                << "] Atualizando probabilidades..." << endl;
             
             vector<double> medias(m, 0.0);
 
@@ -207,30 +183,12 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
                     probabilidades[i] = qValues[i] / somaQ;
                 }
             } else {
-                cout << "  Aviso: Todos q_i são zero, mantendo probabilidades uniformes" << endl;
                 for(int i = 0; i < m; i++) {
                     probabilidades[i] = 1.0 / m;
                 }
             }
-
-            cout << "  Novas probabilidades: ";
-            for(int i = 0; i < m; i++) {
-                cout << "α" << alphas[i] << "=" << fixed << setprecision(3) << probabilidades[i] << " ";
-            }
-            cout << endl;
-
-            cout << "  Médias dos alphas: ";
-            for(int i = 0; i < m; i++) {
-                if(contadorUsos[i] > 0) {
-                    cout << "α" << alphas[i] << "=" << fixed << setprecision(2) << medias[i] << " ";
-                } else {
-                    cout << "α" << alphas[i] << "=N/A ";
-                }
-            }
-            cout << endl;
         }
-
-    
+//Escolha do Alpha
         double alphaEscolhido;
         int idxAlphaEscolhido;
 
@@ -253,17 +211,70 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
             idxAlphaEscolhido = m - 1;
         }
 
-        cout << "  Alpha escolhido: " << alphaEscolhido
-             << " (probabilidade: " << fixed << setprecision(3)
-             << probabilidades[idxAlphaEscolhido] << ")" << endl;
+//Função para construir a solução gulosa randomizada (la,bda)
+        auto construirSolucaoGulosa = [&](double alpha) -> Solucao {
+            int n_local = grafo.getNumVertices();
+            Solucao solucao(n_local, d);
+            UnionFind uf(n_local);
+            
+            const vector<Aresta>& arestas = grafo.getTodasArestasOrdenadas();
+            int arestasAdicionadas = 0;
+            
+            while (arestasAdicionadas < n_local - 1) {
+                // Monta lista de candidatos viáveis
+                vector<Aresta> candidatos;
+                double custoMin = 1e9, custoMax = -1e9;
+                
+                for (const auto& a : arestas) {
+                    int u = a.getU(), v = a.getV();
+                    if (uf.find(u) != uf.find(v) &&
+                        solucao.getGrau(u) < d &&
+                        solucao.getGrau(v) < d) {
+                        candidatos.push_back(a);
+                        double peso = a.getPeso();
+                        custoMin = min(custoMin, peso);
+                        custoMax = max(custoMax, peso);
+                    }
+                }
+                
+                if (candidatos.empty()) {
+                    break;
+                }
+                
+                // Monta RCL (Lista de Candidatos Restritos)
+                vector<Aresta> rcl;
+                double limite = custoMin + alpha * (custoMax - custoMin);
+                for (const auto& a : candidatos) {
+                    if (a.getPeso() <= limite) {
+                        rcl.push_back(a);
+                    }
+                }
+                
+                if (rcl.empty()) {
+                    break;
+                }
+                
+                // Escolhe aleatoriamente uma aresta da RCL
+                int idx = randomInt(0, rcl.size() - 1);
+                const Aresta& escolhida = rcl[idx];
+                
+                int u = escolhida.getU();
+                int v = escolhida.getV();
+                if (solucao.adicionarAresta(escolhida)) {
+                    uf.unir(u, v);
+                    arestasAdicionadas++;
+                }
+            }
+            
+            return solucao;
+        };
 
-
-        Solucao solucaoAtual = algoritmoGulosoRandomizado(grafo, d, alphaEscolhido);
+       //construção da solução
+        Solucao solucaoAtual = construirSolucaoGulosa(alphaEscolhido);
         double pesoAtual = solucaoAtual.getCusto();
 
-        cout << "  Peso da solução: " << pesoAtual << endl;
 
-
+        //atualizar estatisticas
         contadorUsos[idxAlphaEscolhido]++;
         historicoQualidade[idxAlphaEscolhido].push_back(pesoAtual);
 
@@ -274,36 +285,17 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
         }
         mediasQualidade[idxAlphaEscolhido] = somaLocal / historicoQualidade[idxAlphaEscolhido].size();
 
-        cout << "  Média atual deste alpha: " << mediasQualidade[idxAlphaEscolhido] << endl;
 
-     
+//Atualiza melhor solução Global
         if(pesoAtual < melhorPesoGlobal) {
             melhorSolucaoGlobal = solucaoAtual;  
             melhorPesoGlobal = pesoAtual;        
-            cout << "  *** NOVA MELHOR SOLUÇÃO ENCONTRADA! ***" << endl;
-            cout << "      Peso: " << pesoAtual << endl;
-            cout << "      Alpha usado: " << alphaEscolhido << endl;
-        }
-
-
-        if((iteracao + 1) % 10 == 0) {
-            cout << "\n[Progresso] Iteração " << setw(3) << (iteracao + 1) 
-                 << "/" << maxIteracoesTotal << endl;
-            cout << "  Melhor peso até agora: " << melhorPesoGlobal << endl;
-            cout << "  Distribuição de uso dos Alphas: ";
-            for(int i = 0; i < m; i++) {
-                cout << "α" << alphas[i] << ":" << contadorUsos[i] << " ";
-            }
-            cout << endl;
         }
     }
 
-   
-    cout << "\n========================================" << endl;
-    cout << "         RELATÓRIO FINAL               " << endl;
-    cout << "========================================" << endl;
-    
-    cout << "\nDESEMPENHO DOS ALPHAS:" << endl;
+
+    // Exibe desempenho dos alphas    
+    cout << "DESEMPENHO DOS ALPHAS:" << endl;
     for (int i = 0; i < m; i++) {
         if (contadorUsos[i] > 0) {
             double soma = 0.0;
@@ -317,24 +309,19 @@ Solucao algoritmoGulosoRandomizadoReativo(const Grafo& grafo, int d, const std::
             double media = soma / historicoQualidade[i].size();
             
             cout << "Alpha " << alphas[i] 
-                 << ": usado " << contadorUsos[i] << " vezes"
-                 << ", média: " << fixed << setprecision(2) << media
-                 << ", melhor: " << melhorLocal
-                 << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
+                << ": usado " << contadorUsos[i] << " vezes"
+                << ", média: " << fixed << setprecision(2) << media
+                << ", melhor: " << melhorLocal
+                << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
         } else {
             cout << "Alpha " << alphas[i] 
-                 << ": não foi usado" 
-                 << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
+                << ": não foi usado" 
+                << ", probabilidade final: " << fixed << setprecision(3) << probabilidades[i] << endl;
         }
     }
     
     // Verifica validade
     melhorSolucaoGlobal.verificarValidade();
-    
-    cout << "\nMELHOR SOLUÇÃO ENCONTRADA:" << endl;
-    cout << "  Peso total: " << fixed << setprecision(2) << melhorPesoGlobal << endl;
-    cout << "  Solução válida: " << (melhorSolucaoGlobal.isValida() ? "SIM ✓" : "NÃO ✗") << endl;
-    cout << "========================================\n" << endl;
 
     return melhorSolucaoGlobal;
 }
