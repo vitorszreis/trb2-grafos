@@ -35,31 +35,28 @@ Para remover arquivos compilados:
 
 ### Algoritmo Guloso
 
-    ./programa guloso instancias/exemplo.txt <grau máximo>
+    ./programa guloso <nome instancia> <grau máximo>
 
     Exemplo:
-    ./programa guloso instancias/exemplo.txt 50
+    ./programa guloso crd100 50
 
 ### Algoritmo Guloso Randomizado
 
-    ./programa randomizado <instancia> <grau_maximo> <alfa>
+    ./programa randomizado <nome instancia> <grau_maximo> <alfa>
 
     Exemplo:
-    ./programa randomizado instancias/exemplo.txt 50 0.3
+    ./programa randomizado crd100 50 0.3
 
     Você pode definir a semente para garantir reprodutibilidade dos resultados:
-    ./programa --seed=12345 randomizado instancias/exemplo.txt 50 0.3
+    ./programa --seed=12345 randomizado crd100 50 0.3
 
 ### Algoritmo Reativo
 
-    ./programa reativo instancias/exemplo.txt <num_iteracoes> <tamanho_bloco>
+    ./programa reativo <nome instancia> <num_iteracoes> <tamanho_bloco>
 
     Exemplo:
-    ./programa reativo instancias/exemplo.txt 300 30
+    ./programa reativo <nome instancia> 300 30
 
-### Definir Semente Manualmente
-
-    ./programa --seed=12345 guloso instancias/exemplo.txt
 
 ## FORMATO DAS INSTÂNCIAS
 
